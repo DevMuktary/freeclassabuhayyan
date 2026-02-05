@@ -11,7 +11,7 @@ export async function sendWelcomeEmail(name: string, email: string) {
   try {
     const result = await client.sendMail({
       from: {
-        address: "noreply@quadroxtech.com", // Ensure this matches your Zeptomail verified sender
+        address: "no-reply@abuhayyan.com.ng", // Ensure this matches your Zeptomail verified sender
         name: "Abu Hayyan School",
       },
       to: [
