@@ -2,17 +2,22 @@
 
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { X, ArrowRight, Loader2, Check, Star, TrendingUp, Users, Play, Shield } from "lucide-react";
+import { X, ArrowRight, Loader2, Check, Plus, Minus } from "lucide-react";
 
 export default function Home() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [formData, setFormData] = useState({ name: "", email: "" });
   const [status, setStatus] = useState<"idle" | "loading" | "success" | "error">("idle");
+  const [openFaqIndex, setOpenFaqIndex] = useState<number | null>(null);
 
   const openModal = () => setIsModalOpen(true);
   const closeModal = () => {
     setIsModalOpen(false);
     setStatus("idle");
+  };
+
+  const toggleFaq = (index: number) => {
+    setOpenFaqIndex(openFaqIndex === index ? null : index);
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -31,287 +36,309 @@ export default function Home() {
     }
   };
 
-  // Animation Variants
-  const containerVars = {
-    hidden: { opacity: 0 },
-    show: { opacity: 1, transition: { staggerChildren: 0.1 } }
-  };
-  
-  const itemVars = {
-    hidden: { opacity: 0, y: 20 },
-    show: { opacity: 1, y: 0, transition: { duration: 0.5, ease: "easeOut" } }
-  };
-
   return (
-    <main className="min-h-screen bg-[#001232] text-white selection:bg-[#FFB902] selection:text-[#001232] relative overflow-hidden font-sans">
+    <main className="min-h-screen bg-[#001232] text-white selection:bg-[#FFB902] selection:text-[#001232] font-sans">
       
-      {/* --- AMBIENT GLOW BACKGROUND --- */}
-      <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[500px] bg-[#FFB902] opacity-[0.08] blur-[150px] pointer-events-none rounded-full"></div>
+      {/* --- GRID BACKGROUND TEXTURE --- */}
+      <div className="fixed inset-0 opacity-[0.05] pointer-events-none"
+           style={{ backgroundImage: 'linear-gradient(#fff 1px, transparent 1px), linear-gradient(90deg, #fff 1px, transparent 1px)', backgroundSize: '50px 50px' }}>
+      </div>
 
       {/* --- NAVIGATION --- */}
-      <nav className="fixed top-0 w-full z-40 bg-[#001232]/80 backdrop-blur-xl border-b border-white/5">
-        <div className="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between">
+      <nav className="fixed top-0 left-0 right-0 z-40 border-b border-white/10 bg-[#001232]/90 backdrop-blur-md">
+        <div className="max-w-[1400px] mx-auto px-6 h-20 flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <div className="w-8 h-8 bg-gradient-to-br from-[#FFB902] to-[#B38000] rounded-lg flex items-center justify-center text-[#001232] font-bold text-lg">
-              A
-            </div>
-            <span className="font-semibold tracking-wide text-sm text-gray-200 uppercase">
-              Abu Hayyan School
-            </span>
+             <div className="w-2 h-2 bg-[#FFB902]"></div>
+             <span className="font-mono text-xs tracking-[0.2em] uppercase">Abu Hayyan School</span>
           </div>
           <button 
             onClick={openModal}
-            className="text-xs font-bold tracking-widest uppercase px-6 py-2.5 rounded-full border border-white/10 hover:border-[#FFB902] hover:text-[#FFB902] transition-all duration-300"
+            className="hidden md:block border border-[#FFB902] text-[#FFB902] px-6 py-2 text-xs font-bold tracking-widest uppercase hover:bg-[#FFB902] hover:text-[#001232] transition-all"
           >
-            Reserve Seat
+            Join Class
           </button>
         </div>
       </nav>
 
-      {/* --- HERO SECTION --- */}
-      <section className="relative pt-44 pb-32 px-6">
-        <div className="max-w-5xl mx-auto text-center">
-          
+      <div className="max-w-[1400px] mx-auto border-x border-white/10 pt-20">
+
+        {/* --- HERO SECTION --- */}
+        <section className="relative px-6 py-24 md:py-32 border-b border-white/10">
           <motion.div 
-            initial="hidden"
-            animate="show"
-            variants={containerVars}
+            initial={{ opacity: 0, y: 30 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8 }}
+            className="max-w-5xl"
           >
-            <motion.div variants={itemVars} className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/5 border border-white/10 mb-8 backdrop-blur-sm">
-              <span className="flex h-2 w-2 relative">
-                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
-                <span className="relative inline-flex rounded-full h-2 w-2 bg-green-500"></span>
+            <div className="inline-block px-3 py-1 bg-white/5 border border-white/10 rounded-full mb-8">
+              <span className="font-mono text-[#FFB902] text-xs tracking-widest uppercase">
+                • One Day Online Class
               </span>
-              <span className="text-xs font-medium tracking-wider text-gray-300 uppercase">Live One-Day Masterclass</span>
-            </motion.div>
-
-            <motion.h1 variants={itemVars} className="text-5xl md:text-7xl lg:text-8xl font-bold tracking-tight mb-8 leading-[1.1]">
-              Halal Digital <br />
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#FFB902] via-[#ffe082] to-[#FFB902] drop-shadow-[0_0_15px_rgba(255,185,2,0.3)]">
-                Hustles From Home
-              </span>
-            </motion.h1>
-
-            <motion.p variants={itemVars} className="text-lg md:text-2xl text-gray-400 max-w-2xl mx-auto mb-12 leading-relaxed">
-              10 legitimate, scalable online business models. <br className="hidden md:block"/>
-              Master the skills to earn independently without stepping out.
-            </motion.p>
-
-            <motion.div variants={itemVars} className="flex flex-col sm:flex-row items-center justify-center gap-4">
-              <button 
-                onClick={openModal}
-                className="group relative w-full sm:w-auto px-10 py-5 bg-[#FFB902] text-[#001232] rounded-full font-bold text-lg shadow-[0_0_30px_-10px_rgba(255,185,2,0.6)] hover:shadow-[0_0_50px_-10px_rgba(255,185,2,0.8)] transition-all duration-300 transform hover:-translate-y-1 overflow-hidden"
-              >
-                <div className="absolute inset-0 bg-white/20 group-hover:translate-x-full transition-transform duration-500 skew-x-12 -translate-x-full"></div>
-                <span className="relative flex items-center justify-center gap-2">
-                  Register for Free <ArrowRight className="w-5 h-5" />
-                </span>
-              </button>
-              
-              <button className="w-full sm:w-auto px-10 py-5 rounded-full border border-white/10 hover:bg-white/5 text-gray-300 font-medium transition-all">
-                View Curriculum
-              </button>
-            </motion.div>
-          </motion.div>
-
-        </div>
-      </section>
-
-      {/* --- STATS / FEATURES BAR --- */}
-      <div className="border-y border-white/5 bg-[#000d24]/50 backdrop-blur-sm">
-        <div className="max-w-6xl mx-auto grid grid-cols-2 md:grid-cols-4 divide-x divide-white/5">
-          {[
-            { label: "Business Models", value: "10" },
-            { label: "Registration Cost", value: "FREE" },
-            { label: "Location", value: "ONLINE" },
-            { label: "Prerequisites", value: "NONE" },
-          ].map((stat, i) => (
-            <div key={i} className="py-8 text-center group hover:bg-white/[0.02] transition-colors">
-              <div className="text-2xl font-bold text-white mb-1 group-hover:text-[#FFB902] transition-colors">{stat.value}</div>
-              <div className="text-xs text-gray-500 uppercase tracking-widest">{stat.label}</div>
             </div>
-          ))}
+            
+            <h1 className="font-serif text-5xl md:text-8xl leading-[1.05] mb-8">
+              Halal Digital <br/>
+              <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#FFB902] to-[#FFE584]">Hustles</span> From Home
+            </h1>
+
+            <p className="text-xl md:text-2xl text-gray-400 font-light max-w-2xl border-l-2 border-[#FFB902] pl-6">
+              10 Online Businesses You Can Do From Home Without Stepping Out.
+            </p>
+
+            <div className="mt-12">
+               <button 
+                onClick={openModal}
+                className="group relative inline-flex items-center justify-center bg-white text-[#001232] px-10 py-5 text-sm font-bold tracking-widest uppercase overflow-hidden hover:bg-[#FFB902] transition-colors duration-300"
+              >
+                Secure Free Seat
+                <ArrowRight className="ml-3 w-4 h-4 group-hover:translate-x-1 transition-transform" />
+              </button>
+            </div>
+          </motion.div>
+        </section>
+
+        {/* --- MARQUEE: WHO CAN JOIN --- */}
+        <div className="border-b border-white/10 bg-[#FFB902] overflow-hidden py-3">
+          <div className="flex whitespace-nowrap animate-marquee">
+            {[...Array(4)].map((_, i) => (
+               <div key={i} className="flex items-center">
+                 {["Students", "Stay at Home Individuals", "Workers looking for extra income", "Anyone tired of waiting"].map((text, j) => (
+                   <span key={j} className="text-[#001232] font-mono text-sm font-bold uppercase tracking-widest mx-8">
+                     {text} •
+                   </span>
+                 ))}
+               </div>
+            ))}
+          </div>
         </div>
+
+        {/* --- TWO COLUMN LAYOUT: COVERAGE & GAINS --- */}
+        <section className="grid lg:grid-cols-2 divide-y lg:divide-y-0 lg:divide-x border-white/10">
+          
+          {/* COLUMN 1: WHAT IT COVERS */}
+          <div className="p-8 md:p-16">
+            <h3 className="font-serif text-3xl mb-8">What This Class Will Cover</h3>
+            <div className="space-y-0">
+              {[
+                "Overview of the online economy",
+                "The 10 online businesses you can start from home",
+                "How each business works",
+                "Skills required for each one",
+                "Startup tools you need",
+                "How to start with little or no capital",
+                "Common mistakes beginners make",
+                "How to choose the one that fits you",
+                "How to get your first client or customer",
+                "Next steps after the class"
+              ].map((item, i) => (
+                <div key={i} className="flex items-start gap-4 py-4 border-b border-white/10 group hover:pl-4 transition-all duration-300 cursor-default">
+                  <span className="font-mono text-xs text-[#FFB902] mt-1">0{i+1}</span>
+                  <span className="text-gray-300 group-hover:text-white font-light text-lg">{item}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* COLUMN 2: GAINS & WARNING */}
+          <div className="bg-[#000F2A] flex flex-col">
+            
+            {/* GAINS */}
+            <div className="p-8 md:p-16 flex-1">
+              <h3 className="font-serif text-3xl mb-8">What You Will Gain</h3>
+              <ul className="grid gap-6">
+                {[
+                  "Clear understanding of online business options",
+                  "Practical steps",
+                  "Ability to pick one path and focus",
+                  "One day intensive session",
+                  "Live teaching",
+                  "Question and answer session",
+                  "Practical examples",
+                  "Simple explanations"
+                ].map((item, i) => (
+                  <li key={i} className="flex items-center gap-3 text-gray-300">
+                    <Check className="w-5 h-5 text-[#FFB902]" />
+                    <span>{item}</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+
+            {/* NOT FOR WHO SECTION (Red Warning) */}
+            <div className="p-8 md:p-16 border-t border-white/10 bg-red-900/10">
+              <h4 className="font-mono text-xs text-red-500 uppercase tracking-widest mb-4">Who This Class Is NOT For</h4>
+              <div className="space-y-2">
+                {[
+                  "People looking for quick money",
+                  "Those not ready to learn",
+                  "Those who will not implement what is learnt"
+                ].map((item, i) => (
+                  <div key={i} className="flex items-center gap-3 text-red-200/80">
+                    <X className="w-4 h-4" />
+                    <span>{item}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+          </div>
+        </section>
+
+        {/* --- FAQ SECTION (DETAILS) --- */}
+        <section className="border-y border-white/10">
+          <div className="grid md:grid-cols-12">
+            <div className="md:col-span-4 p-8 md:p-16 border-b md:border-b-0 md:border-r border-white/10">
+              <h3 className="font-serif text-3xl">Details</h3>
+            </div>
+            <div className="md:col-span-8">
+              {[
+                { q: "Where is the class held?", a: "Mode: Online (Join from your phone or laptop)" },
+                { q: "Is there any cost?", a: "Registration is 100% FREE." },
+                { q: "Are there any bonuses?", a: "Yes. You will receive a Free Ebook and Guidance on the next move." },
+                { q: "Who organizes this?", a: "Presented by Abu Hayyan School of Skills and Deen." }
+              ].map((faq, i) => (
+                <div key={i} className="border-b border-white/10 last:border-0">
+                  <button 
+                    onClick={() => toggleFaq(i)}
+                    className="w-full text-left p-8 flex items-center justify-between hover:bg-white/5 transition-colors"
+                  >
+                    <span className="font-medium text-lg">{faq.q}</span>
+                    {openFaqIndex === i ? <Minus className="text-[#FFB902]" /> : <Plus className="text-gray-500" />}
+                  </button>
+                  <AnimatePresence>
+                    {openFaqIndex === i && (
+                      <motion.div 
+                        initial={{ height: 0, opacity: 0 }}
+                        animate={{ height: "auto", opacity: 1 }}
+                        exit={{ height: 0, opacity: 0 }}
+                        className="overflow-hidden"
+                      >
+                        <div className="px-8 pb-8 text-gray-400 font-light">
+                          {faq.a}
+                        </div>
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        {/* --- FOOTER --- */}
+        <footer className="py-24 px-6 text-center bg-[#000F2A]">
+          <h2 className="font-serif text-4xl md:text-6xl text-white mb-8">
+            Start Your Halal Hustle.
+          </h2>
+          <button 
+            onClick={openModal}
+            className="bg-[#FFB902] text-[#001232] px-12 py-6 text-sm font-bold tracking-[0.2em] uppercase hover:bg-white transition-all"
+          >
+            Register Now
+          </button>
+          
+          <div className="mt-20 flex flex-col md:flex-row justify-between items-center text-xs text-gray-600 font-mono uppercase tracking-widest pt-8 border-t border-white/5 max-w-4xl mx-auto">
+            <span>© 2026 Abu Hayyan School</span>
+            <span>Skills & Deen</span>
+          </div>
+        </footer>
+
       </div>
 
-      {/* --- THE VALUE PROPOSITION (Grid) --- */}
-      <section className="py-32 px-6">
-        <div className="max-w-6xl mx-auto">
-          <div className="flex flex-col md:flex-row justify-between items-end mb-16 gap-6">
-            <div>
-              <h2 className="text-3xl md:text-4xl font-bold mb-4">What You Will Gain</h2>
-              <p className="text-gray-400 max-w-md">We cut through the noise. This is a practical, direct-to-point masterclass on generating online income.</p>
-            </div>
-            <div className="h-px bg-white/10 flex-1 ml-12 mb-4 hidden md:block"></div>
-          </div>
-
-          <div className="grid md:grid-cols-3 gap-8">
-            {[
-              { 
-                icon: TrendingUp, 
-                title: "The Economy", 
-                desc: "Understand exactly how money moves online and where the opportunities are in 2026." 
-              },
-              { 
-                icon: Shield, 
-                title: "The Structure", 
-                desc: "Learn how to set up your digital presence professionally to attract high-paying clients." 
-              },
-              { 
-                icon: Users, 
-                title: "The Clients", 
-                desc: "Proven strategies to find and close your first customer without spending money on ads." 
-              }
-            ].map((card, i) => (
-              <div key={i} className="bg-[#001840]/30 border border-white/5 p-10 rounded-3xl hover:border-[#FFB902]/30 hover:bg-[#001840]/60 transition-all duration-300 group">
-                <div className="w-14 h-14 bg-[#FFB902]/10 rounded-2xl flex items-center justify-center mb-8 group-hover:bg-[#FFB902] transition-colors duration-300">
-                  <card.icon className="w-7 h-7 text-[#FFB902] group-hover:text-[#001232] transition-colors" />
-                </div>
-                <h3 className="text-xl font-bold mb-4">{card.title}</h3>
-                <p className="text-gray-400 leading-relaxed text-sm">{card.desc}</p>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* --- CURRICULUM ACCORDION STYLE --- */}
-      <section className="py-24 bg-gradient-to-b from-[#000d24] to-[#001232]">
-        <div className="max-w-4xl mx-auto px-6">
-          <h2 className="text-center text-3xl font-bold mb-16">Masterclass Curriculum</h2>
-          
-          <div className="space-y-4">
-            {[
-              "1. Overview of the Online Economy",
-              "2. The 10 Business Models Breakdown",
-              "3. Required Skills & Tools (Zero Capital)",
-              "4. Identifying Your Niche",
-              "5. Client Acquisition Strategies",
-              "6. Common Beginner Mistakes",
-              "7. Live Q&A Session"
-            ].map((item, i) => (
-              <div key={i} className="group flex items-center p-6 bg-[#001232] border border-white/5 rounded-2xl hover:border-[#FFB902]/50 transition-all cursor-default shadow-lg">
-                <div className="w-10 h-10 rounded-full border border-white/10 flex items-center justify-center text-sm font-mono text-gray-500 mr-6 group-hover:border-[#FFB902] group-hover:text-[#FFB902] transition-colors">
-                  0{i + 1}
-                </div>
-                <span className="text-lg text-gray-300 group-hover:text-white transition-colors font-medium">{item}</span>
-                <Check className="ml-auto w-5 h-5 text-[#FFB902] opacity-0 group-hover:opacity-100 transition-opacity transform translate-x-2 group-hover:translate-x-0" />
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* --- FOOTER --- */}
-      <footer className="py-12 px-6 border-t border-white/5 text-center">
-        <div className="mb-8">
-          <div className="inline-flex items-center justify-center w-12 h-12 bg-[#FFB902]/10 rounded-xl mb-4">
-            <span className="text-[#FFB902] font-bold text-xl">A</span>
-          </div>
-          <p className="text-sm text-gray-400">Abu Hayyan School of Skills & Deen</p>
-        </div>
-        <p className="text-xs text-gray-600">
-          © {new Date().getFullYear()} All rights reserved.
-        </p>
-      </footer>
-
-      {/* --- PREMIUM MODAL --- */}
+      {/* --- MODAL --- */}
       <AnimatePresence>
         {isModalOpen && (
           <motion.div 
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 z-50 flex items-center justify-center px-4 bg-[#000510]/80 backdrop-blur-md"
+            className="fixed inset-0 z-50 flex items-center justify-center px-4 bg-[#001232]/95 backdrop-blur-sm"
             onClick={closeModal}
           >
             <motion.div 
-              initial={{ scale: 0.9, opacity: 0, y: 20 }}
+              initial={{ scale: 0.95, opacity: 0, y: 20 }}
               animate={{ scale: 1, opacity: 1, y: 0 }}
-              exit={{ scale: 0.9, opacity: 0, y: 20 }}
+              exit={{ scale: 0.95, opacity: 0, y: 20 }}
               onClick={(e) => e.stopPropagation()}
-              className="w-full max-w-md bg-[#001232] rounded-3xl border border-white/10 shadow-2xl relative overflow-hidden"
+              className="w-full max-w-lg bg-[#000F2A] border border-white/20 shadow-2xl relative"
             >
-              {/* Modal Header Decoration */}
-              <div className="absolute top-0 inset-x-0 h-1.5 bg-gradient-to-r from-[#FFB902] via-[#ffe082] to-[#FFB902]"></div>
-
-              <button 
-                onClick={closeModal}
-                className="absolute top-5 right-5 p-2 bg-white/5 hover:bg-white/10 rounded-full text-gray-400 hover:text-white transition-colors"
-              >
-                <X className="w-4 h-4" />
+              <button onClick={closeModal} className="absolute top-4 right-4 text-white hover:text-[#FFB902] transition-colors">
+                <X className="w-6 h-6" />
               </button>
 
-              <div className="p-10">
+              <div className="p-10 md:p-14">
                 {status === "success" ? (
-                  <div className="text-center py-6">
-                    <div className="w-20 h-20 bg-gradient-to-br from-green-400 to-green-600 rounded-full flex items-center justify-center mx-auto mb-6 shadow-lg shadow-green-500/20">
-                      <Check className="w-10 h-10 text-white" />
+                  <div className="text-center">
+                    <div className="w-16 h-16 border-2 border-[#FFB902] rounded-full flex items-center justify-center mx-auto mb-6 text-[#FFB902]">
+                      <Check className="w-8 h-8" />
                     </div>
-                    <h3 className="text-2xl font-bold text-white mb-2">Spot Secured!</h3>
-                    <p className="text-gray-400 mb-8 text-sm leading-relaxed">
-                      Alhamdulillah. You are registered. <br/>
-                      <span className="text-white font-semibold">Join the WhatsApp group below</span> to receive the class link.
+                    <h3 className="font-serif text-3xl text-white mb-4">You're In.</h3>
+                    <p className="text-gray-400 mb-8 font-light">
+                      Registration successful. Join the WhatsApp group to receive the class link.
                     </p>
                     <a 
                       href="https://chat.whatsapp.com/Ek0pnOcQkuEHsOAqU8cnpM"
                       target="_blank"
-                      className="block w-full bg-[#25D366] hover:bg-[#20bd5a] text-white py-4 rounded-xl font-bold transition-all transform hover:scale-[1.02] shadow-lg shadow-green-500/20 flex items-center justify-center gap-2"
+                      className="block w-full bg-[#25D366] hover:bg-white hover:text-[#001232] text-white py-4 font-mono text-sm font-bold tracking-widest uppercase transition-all text-center"
                     >
-                      <svg viewBox="0 0 24 24" className="w-5 h-5 fill-current"><path d="M12.031 6.172c-3.181 0-5.767 2.586-5.768 5.766-.001 1.298.38 2.27 1.019 3.287l-.711 2.592 2.654-.696c1.001.572 2.135.882 3.297.882 3.181 0 5.768-2.587 5.768-5.766-.001-3.182-2.587-5.765-5.259-5.765z"/></svg>
                       Join WhatsApp Group
                     </a>
                   </div>
                 ) : (
-                  <>
-                    <div className="mb-8">
-                      <h3 className="text-2xl font-bold text-white mb-1">Secure Your Seat</h3>
-                      <p className="text-gray-400 text-sm">Fill in your details to get started.</p>
+                  <form onSubmit={handleSubmit} className="space-y-8">
+                    <div className="text-center mb-8">
+                      <h3 className="font-serif text-2xl text-white">Reserve Your Spot</h3>
+                      <p className="text-xs font-mono text-[#FFB902] uppercase tracking-widest mt-2">Free Registration</p>
                     </div>
 
-                    <form onSubmit={handleSubmit} className="space-y-5">
-                      <div className="space-y-1.5">
-                        <label className="text-xs font-bold text-gray-400 uppercase tracking-wider ml-1">Full Name</label>
+                    <div className="space-y-6">
+                       <div>
+                        <label className="block font-mono text-xs text-gray-500 uppercase tracking-widest mb-2">Full Name</label>
                         <input 
                           required
                           type="text" 
-                          className="w-full bg-[#000d24] border border-white/10 rounded-xl p-4 text-white placeholder-gray-600 focus:outline-none focus:border-[#FFB902] focus:ring-1 focus:ring-[#FFB902] transition-all"
-                          placeholder="e.g. Ibrahim Musa"
+                          className="w-full bg-[#001232] border border-white/20 p-4 text-white placeholder-gray-600 focus:outline-none focus:border-[#FFB902] transition-colors"
+                          placeholder="Enter your name"
                           value={formData.name}
                           onChange={(e) => setFormData({...formData, name: e.target.value})}
                         />
-                      </div>
-                      
-                      <div className="space-y-1.5">
-                        <label className="text-xs font-bold text-gray-400 uppercase tracking-wider ml-1">Email Address</label>
+                       </div>
+                       <div>
+                        <label className="block font-mono text-xs text-gray-500 uppercase tracking-widest mb-2">Email Address</label>
                         <input 
                           required
                           type="email" 
-                          className="w-full bg-[#000d24] border border-white/10 rounded-xl p-4 text-white placeholder-gray-600 focus:outline-none focus:border-[#FFB902] focus:ring-1 focus:ring-[#FFB902] transition-all"
-                          placeholder="name@example.com"
+                          className="w-full bg-[#001232] border border-white/20 p-4 text-white placeholder-gray-600 focus:outline-none focus:border-[#FFB902] transition-colors"
+                          placeholder="Enter your email"
                           value={formData.email}
                           onChange={(e) => setFormData({...formData, email: e.target.value})}
                         />
-                      </div>
+                       </div>
+                    </div>
 
-                      <button 
-                        disabled={status === "loading"}
-                        className="w-full bg-[#FFB902] hover:bg-[#e6a600] text-[#001232] font-bold py-4 rounded-xl text-base transition-all mt-4 shadow-lg shadow-[#FFB902]/20 flex items-center justify-center gap-2"
-                      >
-                        {status === "loading" ? <Loader2 className="animate-spin w-5 h-5" /> : "Confirm Registration"}
-                      </button>
-                    </form>
-                    
-                    <p className="text-center text-[10px] text-gray-600 mt-6">
-                      By registering, you agree to receive class updates via email.
-                    </p>
-                  </>
+                    <button 
+                      disabled={status === "loading"}
+                      className="w-full bg-[#FFB902] text-[#001232] hover:bg-white py-5 font-mono text-sm font-bold tracking-widest uppercase transition-colors"
+                    >
+                      {status === "loading" ? <Loader2 className="animate-spin w-5 h-5 mx-auto" /> : "Confirm Registration"}
+                    </button>
+                  </form>
                 )}
               </div>
             </motion.div>
           </motion.div>
         )}
       </AnimatePresence>
+      
+      <style jsx global>{`
+        @keyframes marquee {
+          0% { transform: translateX(0); }
+          100% { transform: translateX(-50%); }
+        }
+        .animate-marquee {
+          animation: marquee 30s linear infinite;
+        }
+      `}</style>
     </main>
   );
 }
