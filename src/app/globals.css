@@ -1,0 +1,14 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --foreground-rgb: 255, 255, 255;
+  --background-start-rgb: 0, 18, 50; /* Your Navy Color */
+  --background-end-rgb: 0, 18, 50;
+}
+
+body {
+  color: rgb(var(--foreground-rgb));
+  background: #001232;
+}
