@@ -1,12 +1,14 @@
 import type { Metadata } from "next";
-import { Inter } from "next/font/google";
+import { Playfair_Display, JetBrains_Mono, Inter } from "next/font/google";
 import "./globals.css";
 
-const inter = Inter({ subsets: ["latin"] });
+const playfair = Playfair_Display({ subsets: ["latin"], variable: '--font-serif' });
+const mono = JetBrains_Mono({ subsets: ["latin"], variable: '--font-mono' });
+const inter = Inter({ subsets: ["latin"], variable: '--font-sans' });
 
 export const metadata: Metadata = {
-  title: "Halal Digital Hustles From Home | Abu Hayyan School",
-  description: "10 Online Businesses You Can Do From Home. Free Masterclass.",
+  title: "Halal Digital Hustles",
+  description: "Abu Hayyan School of Skills & Deen",
 };
 
 export default function RootLayout({
@@ -16,7 +18,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={`${inter.className} bg-[#001232] text-white antialiased`}>
+      <body className={`${inter.variable} ${playfair.variable} ${mono.variable} bg-[#001232] text-white antialiased`}>
         {children}
       </body>
     </html>
