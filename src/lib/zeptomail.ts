@@ -1,4 +1,5 @@
 // src/lib/zeptomail.ts
+// @ts-ignore
 import { SendMailClient } from "zeptomail";
 
 const url = "api.zeptomail.com/";
@@ -10,7 +11,7 @@ export async function sendWelcomeEmail(name: string, email: string) {
   try {
     const result = await client.sendMail({
       from: {
-        address: "noreply@abuhayyan.com.ng", // REPLACE THIS with your verified Zeptomail sender address
+        address: "no-reply@abuhayyan.com.ng", // REPLACE THIS with your verified Zeptomail sender address
         name: "Abu Hayyan School",
       },
       to: [
