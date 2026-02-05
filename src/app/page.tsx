@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { X, ArrowRight, Loader2, Check, Plus, Minus } from "lucide-react";
 
@@ -9,6 +9,16 @@ export default function Home() {
   const [formData, setFormData] = useState({ name: "", email: "" });
   const [status, setStatus] = useState<"idle" | "loading" | "success" | "error">("idle");
   const [openFaqIndex, setOpenFaqIndex] = useState<number | null>(null);
+
+  // --- ANALYTICS TRACKING CODE ADDED HERE ---
+  useEffect(() => {
+    const hasVisited = sessionStorage.getItem("visit_counted");
+    if (!hasVisited) {
+      fetch("/api/track", { method: "POST" });
+      sessionStorage.setItem("visit_counted", "true");
+    }
+  }, []);
+  // -----------------------------------------
 
   const openModal = () => setIsModalOpen(true);
   const closeModal = () => {
