@@ -192,7 +192,7 @@ export default function Home() {
             </div>
             <div className="md:col-span-8">
               {[
-                { q: "Where is the class held?", a: "Mode: Online (Join from your phone or laptop)" },
+                { q: "Where is the class going to hold?", a: "Mode: Online (Join from your phone or laptop)" },
                 { q: "Is there any cost?", a: "Registration is 100% FREE." },
                 { q: "Are there any bonuses?", a: "Yes. You will receive a Free Ebook and Guidance on the next move." },
                 { q: "Who organizes this?", a: "Presented by Abu Hayyan School of Skills and Deen." }
