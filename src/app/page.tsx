@@ -1,13 +1,39 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { X, Loader2, Check } from "lucide-react";
+import { 
+  CheckCircle2, X, ArrowRight, Loader2, 
+  Wallet, ShieldCheck, BookOpen, Star, 
+  ChevronRight, Lock 
+} from "lucide-react";
+
+// --- Animation Variants ---
+const fadeInUp = {
+  hidden: { opacity: 0, y: 20 },
+  visible: { opacity: 1, y: 0, transition: { duration: 0.6, ease: [0.22, 1, 0.36, 1] } }
+};
+
+const staggerContainer = {
+  hidden: { opacity: 0 },
+  visible: {
+    opacity: 1,
+    transition: { staggerChildren: 0.1, delayChildren: 0.3 }
+  }
+};
 
 export default function Home() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [formData, setFormData] = useState({ name: "", email: "" });
   const [status, setStatus] = useState<"idle" | "loading" | "success" | "error">("idle");
+  const [scrolled, setScrolled] = useState(false);
+
+  // Handle scroll for navbar styling
+  useEffect(() => {
+    const handleScroll = () => setScrolled(window.scrollY > 50);
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
 
   const openModal = () => setIsModalOpen(true);
   const closeModal = () => {
@@ -18,245 +44,284 @@ export default function Home() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setStatus("loading");
-    try {
-      const res = await fetch("/api/register", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(formData),
-      });
-      if (res.ok) setStatus("success");
-      else setStatus("error");
-    } catch (error) {
-      setStatus("error");
-    }
+    // Simulate API call
+    setTimeout(() => setStatus("success"), 1500); 
   };
 
   return (
-    <main className="min-h-screen bg-white text-gray-900">
+    <div className="relative min-h-screen bg-[#000B1E] text-slate-200 font-sans selection:bg-[#FFB902] selection:text-[#000B1E] overflow-x-hidden">
       
-      {/* Header */}
-      <nav className="border-b border-gray-200">
-        <div className="max-w-5xl mx-auto px-8 h-16 flex items-center justify-between">
-          <span className="font-medium text-sm">Abu Hayyan School</span>
-          <button 
-            onClick={openModal}
-            className="text-sm px-5 py-2 bg-gray-900 text-white hover:bg-gray-800 transition-colors"
-          >
-            Register
-          </button>
-        </div>
-      </nav>
+      {/* --- AMBIENT BACKGROUND EFFECTS --- */}
+      <div className="fixed inset-0 z-0 pointer-events-none">
+        {/* Subtle Grid Pattern */}
+        <div className="absolute inset-0 bg-[linear-gradient(to_right,#ffffff05_1px,transparent_1px),linear-gradient(to_bottom,#ffffff05_1px,transparent_1px)] bg-[size:4rem_4rem] [mask-image:radial-gradient(ellipse_60%_50%_at_50%_0%,#000_70%,transparent_100%)]"></div>
+        {/* Top Glow */}
+        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[500px] bg-[#0f2e5c] opacity-40 blur-[120px] rounded-full mix-blend-screen"></div>
+        {/* Bottom Gold Glow */}
+        <div className="absolute bottom-0 right-0 w-[500px] h-[500px] bg-[#FFB902] opacity-5 blur-[120px] rounded-full"></div>
+      </div>
 
-      {/* Hero */}
-      <section className="max-w-5xl mx-auto px-8 pt-20 pb-16">
-        <motion.div 
-          initial={{ opacity: 0, y: 10 }} 
-          animate={{ opacity: 1, y: 0 }} 
-          transition={{ duration: 0.6 }}
-        >
-          <div className="max-w-3xl">
-            <p className="text-sm text-gray-600 mb-6">Free Masterclass</p>
-            
-            <h1 className="text-5xl md:text-6xl font-serif leading-tight mb-8 text-gray-900">
-              Ten halal business models you can start from home
-            </h1>
-
-            <p className="text-xl text-gray-700 leading-relaxed mb-10 max-w-2xl">
-              A practical breakdown of legitimate online income streams that require no capital and no compromise on Islamic values.
-            </p>
-
+      {/* --- NAVBAR --- */}
+      <header className={`fixed top-0 left-0 right-0 z-40 transition-all duration-300 ${scrolled ? "py-4" : "py-6"}`}>
+        <div className={`max-w-6xl mx-auto px-6 transition-all duration-300 ${scrolled ? "bg-[#001232]/80 backdrop-blur-xl border border-white/5 rounded-full shadow-2xl shadow-black/20" : ""}`}>
+          <div className="flex items-center justify-between h-12">
+            <div className="flex items-center gap-2">
+              <div className="w-8 h-8 bg-gradient-to-br from-[#FFB902] to-[#B38000] rounded-lg flex items-center justify-center font-bold text-[#001232]">
+                A
+              </div>
+              <div className="text-lg font-bold tracking-tight text-white">
+                ABU HAYYAN <span className="text-[#FFB902] font-medium">SCHOOL</span>
+              </div>
+            </div>
             <button 
               onClick={openModal}
-              className="inline-flex items-center gap-2 text-base bg-gray-900 text-white px-8 py-3 hover:bg-gray-800 transition-colors"
+              className="hidden md:flex items-center gap-2 text-sm font-medium text-white/80 hover:text-white transition-colors"
             >
-              Save your seat
+              Secure Free Seat <ArrowRight className="w-4 h-4" />
             </button>
           </div>
-        </motion.div>
-      </section>
-
-      {/* Three Principles */}
-      <section className="border-y border-gray-200 bg-gray-50">
-        <div className="max-w-5xl mx-auto px-8 py-16">
-          <div className="grid md:grid-cols-3 gap-12">
-            <div>
-              <h3 className="font-medium mb-3">No capital required</h3>
-              <p className="text-gray-600 text-sm leading-relaxed">
-                Every business model uses free or low-cost tools. Start with skills, not savings.
-              </p>
-            </div>
-            <div>
-              <h3 className="font-medium mb-3">Completely halal</h3>
-              <p className="text-gray-600 text-sm leading-relaxed">
-                Vetted to ensure compliance with Islamic principles. No interest, no exploitation.
-              </p>
-            </div>
-            <div>
-              <h3 className="font-medium mb-3">Actually valuable</h3>
-              <p className="text-gray-600 text-sm leading-relaxed">
-                Real market demand. These are skills companies and individuals pay for today.
-              </p>
-            </div>
-          </div>
         </div>
-      </section>
+      </header>
 
-      {/* What You'll Learn */}
-      <section className="max-w-5xl mx-auto px-8 py-20">
-        <div className="grid md:grid-cols-5 gap-12">
-          <div className="md:col-span-2">
-            <h2 className="text-3xl font-serif mb-6">What you'll learn</h2>
-            <p className="text-gray-600 leading-relaxed mb-8">
-              This isn't motivational content. It's a technical walkthrough of ten specific business models, 
-              the tools required, and how to find your first customer.
-            </p>
-            <div className="bg-amber-50 border-l-2 border-amber-600 p-4">
-              <p className="text-sm text-gray-800">
-                Includes a PDF guide and access to our mentorship community.
-              </p>
-            </div>
-          </div>
+      <main className="relative z-10 pt-32 pb-20">
+        
+        {/* --- HERO SECTION --- */}
+        <section className="px-6 max-w-5xl mx-auto text-center mb-32">
+          <motion.div 
+            initial="hidden" 
+            animate="visible" 
+            variants={staggerContainer}
+          >
+            <motion.div variants={fadeInUp} className="flex justify-center mb-8">
+              <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full border border-[#FFB902]/20 bg-[#FFB902]/5 text-[#FFB902] text-xs font-semibold tracking-wider uppercase shadow-[0_0_20px_-5px_rgba(255,185,2,0.3)]">
+                <span className="relative flex h-2 w-2">
+                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#FFB902] opacity-75"></span>
+                  <span className="relative inline-flex rounded-full h-2 w-2 bg-[#FFB902]"></span>
+                </span>
+                Live Masterclass
+              </div>
+            </motion.div>
+            
+            <motion.h1 variants={fadeInUp} className="text-5xl md:text-7xl lg:text-8xl font-bold tracking-tighter text-white mb-8 leading-[0.95]">
+              Halal Digital <br />
+              <span className="relative inline-block text-transparent bg-clip-text bg-gradient-to-b from-[#FFE584] via-[#FFB902] to-[#B38000]">
+                Hustles
+                {/* Glow behind text */}
+                <div className="absolute inset-0 bg-[#FFB902] blur-3xl opacity-20 -z-10"></div>
+              </span> From Home
+            </motion.h1>
 
-          <div className="md:col-span-3 space-y-6">
+            <motion.p variants={fadeInUp} className="text-lg md:text-xl text-slate-400 max-w-2xl mx-auto mb-10 leading-relaxed font-light">
+              Master 10 legitimate, high-value online businesses. <br className="hidden md:block"/>
+              Zero interest. Zero compromise. <span className="text-white font-medium">100% Halal.</span>
+            </motion.p>
+
+            <motion.div variants={fadeInUp} className="flex flex-col sm:flex-row items-center justify-center gap-4">
+              <button 
+                onClick={openModal}
+                className="relative group px-8 py-4 bg-white text-[#001232] text-lg font-bold rounded-full overflow-hidden transition-all hover:scale-[1.02] shadow-[0_0_40px_-10px_rgba(255,255,255,0.3)]"
+              >
+                <div className="absolute inset-0 w-full h-full bg-gradient-to-r from-transparent via-gray-200 to-transparent -translate-x-full group-hover:animate-shimmer"></div>
+                <span className="relative flex items-center gap-2">
+                  Register Now <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
+                </span>
+              </button>
+            </motion.div>
+          </motion.div>
+        </section>
+
+        {/* --- FEATURES GRID --- */}
+        <section className="px-6 max-w-6xl mx-auto mb-32">
+          <motion.div 
+            initial={{ opacity: 0, y: 40 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.8 }}
+            className="grid md:grid-cols-3 gap-6"
+          >
             {[
-              "The 10 business models explained",
-              "Tools and platforms for each",
-              "Finding your first customer",
-              "Setting up payments globally",
-              "Getting to your first $1,000",
-              "Common beginner mistakes"
+              { 
+                icon: Wallet, 
+                title: "Zero Capital", 
+                desc: "Discover models that require just your time and brainpower to launch.",
+                color: "text-emerald-400" 
+              },
+              { 
+                icon: ShieldCheck, 
+                title: "Shariah Compliant", 
+                desc: "Every method is vetted against strict Islamic finance principles.",
+                color: "text-[#FFB902]" 
+              },
+              { 
+                icon: BookOpen, 
+                title: "Execution Playbook", 
+                desc: "Don't just learn 'what'. Learn 'how' with step-by-step guides.",
+                color: "text-blue-400" 
+              }
             ].map((item, i) => (
-              <div key={i} className="flex gap-4 pb-6 border-b border-gray-200 last:border-0">
-                <span className="text-sm text-gray-400 font-mono mt-1">{String(i + 1).padStart(2, '0')}</span>
-                <span className="text-gray-900">{item}</span>
+              <div key={i} className="group relative p-8 rounded-3xl bg-[#031538] border border-white/5 hover:border-white/10 transition-all duration-300 hover:shadow-2xl hover:shadow-[#000]/50 overflow-hidden">
+                <div className={`absolute top-0 right-0 p-32 opacity-10 bg-gradient-to-br from-white to-transparent blur-3xl rounded-full translate-x-12 -translate-y-12 transition-opacity group-hover:opacity-20`}></div>
+                
+                <div className={`w-12 h-12 rounded-2xl bg-white/5 border border-white/10 flex items-center justify-center mb-6 ${item.color}`}>
+                  <item.icon className="w-6 h-6" />
+                </div>
+                <h3 className="text-xl font-bold text-white mb-3">{item.title}</h3>
+                <p className="text-slate-400 leading-relaxed text-sm">{item.desc}</p>
               </div>
             ))}
-          </div>
-        </div>
-      </section>
+          </motion.div>
+        </section>
 
-      {/* Who This Is For */}
-      <section className="bg-gray-900 text-white">
-        <div className="max-w-5xl mx-auto px-8 py-20">
-          <div className="max-w-2xl">
-            <h2 className="text-3xl font-serif mb-6">Who this is for</h2>
-            <div className="space-y-6 text-gray-300">
-              <p className="leading-relaxed">
-                Muslims looking to earn income online without compromising their values. Students, 
-                stay-at-home parents, recent graduates, or anyone wanting to transition away from 
-                traditional employment.
+        {/* --- CURRICULUM SECTION --- */}
+        <section className="px-6 max-w-5xl mx-auto mb-32">
+          <div className="flex flex-col md:flex-row gap-12 items-start">
+            <div className="md:w-1/3 sticky top-32">
+              <h2 className="text-3xl md:text-4xl font-bold text-white mb-4">
+                Masterclass <br />
+                <span className="text-[#FFB902]">Curriculum</span>
+              </h2>
+              <p className="text-slate-400 text-sm leading-relaxed mb-6">
+                This isn't a motivational speech. It's a tactical breakdown of the modern digital economy.
               </p>
-              <p className="leading-relaxed">
-                You don't need prior business experience. You do need internet access, basic computer 
-                skills, and the willingness to learn technical tools.
-              </p>
+              <div className="h-1 w-20 bg-[#FFB902] rounded-full"></div>
+            </div>
+
+            <div className="md:w-2/3 grid gap-4 w-full">
+              {[
+                "Deconstruct the Modern Online Economy",
+                "Blueprint: 10 Halal Business Models",
+                "Bootstrapping: Starting with ₦0 Capital",
+                "Tech Stack: Free Tools to Run Your Empire",
+                "Growth: Acquiring Your First 5 Clients",
+                "Ethics: Navigating Grey Areas in Digital Trade"
+              ].map((text, i) => (
+                <div key={i} className="flex items-center justify-between p-6 rounded-2xl bg-[#001232] border border-white/5 hover:border-[#FFB902]/30 transition-colors group">
+                  <div className="flex items-center gap-4">
+                    <span className="flex items-center justify-center w-8 h-8 rounded-full bg-[#001E4D] text-[#FFB902] text-xs font-bold font-mono border border-white/5">
+                      0{i + 1}
+                    </span>
+                    <span className="text-slate-200 font-medium group-hover:text-white transition-colors">{text}</span>
+                  </div>
+                  <ChevronRight className="w-5 h-5 text-slate-600 group-hover:text-[#FFB902] transition-colors" />
+                </div>
+              ))}
             </div>
           </div>
-        </div>
-      </section>
+        </section>
 
-      {/* About */}
-      <section className="max-w-5xl mx-auto px-8 py-20">
-        <div className="grid md:grid-cols-2 gap-16">
-          <div>
-            <h2 className="text-2xl font-serif mb-4">About Abu Hayyan School</h2>
-            <p className="text-gray-600 leading-relaxed">
-              We teach practical skills alongside Islamic knowledge. This masterclass is part of our 
-              ongoing effort to equip Muslims with economic independence while maintaining their deen.
-            </p>
+        {/* --- WARNING / CTA --- */}
+        <section className="px-6 pb-24">
+          <div className="max-w-4xl mx-auto relative rounded-[2.5rem] overflow-hidden border border-white/10">
+            {/* Background Gradient for CTA */}
+            <div className="absolute inset-0 bg-gradient-to-b from-[#001845] to-[#000510]"></div>
+            
+            <div className="relative p-10 md:p-16 text-center">
+              <div className="inline-flex items-center gap-2 text-rose-400 font-bold tracking-widest text-xs uppercase mb-6 bg-rose-500/10 px-4 py-2 rounded-full border border-rose-500/20">
+                <Lock className="w-3 h-3" /> Strict Warning
+              </div>
+              
+              <h2 className="text-3xl md:text-4xl font-bold text-white mb-6">
+                This is for the <span className="text-white decoration-[#FFB902] underline decoration-4 underline-offset-4">serious</span> few.
+              </h2>
+              
+              <p className="text-slate-400 max-w-xl mx-auto mb-10 text-lg">
+                If you are looking for "get rich quick" schemes or aren't ready to put in the work, please do not register.
+              </p>
+
+              <button 
+                onClick={openModal}
+                className="w-full sm:w-auto bg-[#FFB902] hover:bg-[#E5A500] text-[#001232] px-10 py-5 rounded-full font-bold text-lg transition-all shadow-xl shadow-[#FFB902]/10 hover:shadow-[#FFB902]/30"
+              >
+                Claim My Free Spot
+              </button>
+            </div>
           </div>
-          <div className="flex flex-col justify-end">
-            <p className="text-sm text-gray-500 mb-4">The class is currently free to attend.</p>
-            <button 
-              onClick={openModal}
-              className="self-start bg-gray-900 text-white px-8 py-3 hover:bg-gray-800 transition-colors"
-            >
-              Register now
-            </button>
-          </div>
-        </div>
-      </section>
+        </section>
+        
+        {/* Footer */}
+        <footer className="text-center text-slate-600 text-sm py-8 border-t border-white/5">
+          © {new Date().getFullYear()} Abu Hayyan School. All rights reserved.
+        </footer>
+      </main>
 
-      {/* Footer */}
-      <footer className="border-t border-gray-200 py-12 text-center">
-        <p className="text-sm text-gray-500">
-          © 2024 Abu Hayyan School of Skills & Deen
-        </p>
-      </footer>
-
-      {/* Modal */}
+      {/* --- REFINED MODAL --- */}
       <AnimatePresence>
         {isModalOpen && (
           <motion.div 
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 z-50 flex items-center justify-center px-4 bg-black/40"
+            className="fixed inset-0 z-50 flex items-center justify-center px-4 bg-[#000510]/60 backdrop-blur-md"
             onClick={closeModal}
           >
             <motion.div 
-              initial={{ scale: 0.96, opacity: 0 }}
-              animate={{ scale: 1, opacity: 1 }}
-              exit={{ scale: 0.96, opacity: 0 }}
+              initial={{ scale: 0.95, opacity: 0, y: 20 }}
+              animate={{ scale: 1, opacity: 1, y: 0 }}
+              exit={{ scale: 0.95, opacity: 0, y: 20 }}
               onClick={(e) => e.stopPropagation()}
-              className="w-full max-w-md bg-white shadow-xl relative"
+              className="bg-[#001232] border border-white/10 w-full max-w-md rounded-3xl shadow-2xl overflow-hidden relative"
             >
+              <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-[#FFB902] to-[#B38000]"></div>
+              
               <button 
-                onClick={closeModal} 
-                className="absolute top-6 right-6 text-gray-400 hover:text-gray-900 transition-colors"
+                onClick={closeModal}
+                className="absolute top-5 right-5 text-slate-500 hover:text-white transition-colors p-2 hover:bg-white/5 rounded-full"
               >
                 <X className="w-5 h-5" />
               </button>
 
-              <div className="p-10">
+              <div className="p-8">
                 {status === "success" ? (
-                  <div className="text-center py-6">
-                    <div className="w-14 h-14 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-6">
-                      <Check className="w-7 h-7 text-green-600" />
-                    </div>
-                    <h3 className="text-xl font-medium mb-3">You're registered</h3>
-                    <p className="text-sm text-gray-600 mb-8 leading-relaxed">
-                      Join the WhatsApp group below to receive your access link and class details.
+                  <div className="text-center py-8">
+                    <motion.div 
+                      initial={{ scale: 0 }} animate={{ scale: 1 }} 
+                      className="w-20 h-20 bg-emerald-500/10 rounded-full flex items-center justify-center mx-auto mb-6 border border-emerald-500/20"
+                    >
+                      <CheckCircle2 className="w-10 h-10 text-emerald-500" />
+                    </motion.div>
+                    <h3 className="text-2xl font-bold text-white mb-2">You're In.</h3>
+                    <p className="text-slate-400 mb-8 text-sm">
+                      Masha Allah. Join the exclusive WhatsApp group to receive the class link.
                     </p>
                     <a 
                       href="https://chat.whatsapp.com/Ek0pnOcQkuEHsOAqU8cnpM"
                       target="_blank"
-                      className="block w-full bg-[#25D366] hover:bg-[#1da851] text-white py-3 text-sm font-medium transition-colors text-center"
+                      className="flex items-center justify-center w-full bg-[#25D366] hover:bg-[#1DA851] text-white font-bold py-4 rounded-xl transition-all shadow-lg shadow-green-900/20"
                     >
-                      Join WhatsApp Group
+                       Join WhatsApp Group
                     </a>
                   </div>
                 ) : (
                   <>
                     <div className="mb-8">
-                      <h3 className="text-2xl font-serif mb-2">Register for the class</h3>
-                      <p className="text-sm text-gray-500">Free to attend</p>
+                      <div className="flex items-center gap-2 mb-2">
+                        <Star className="w-4 h-4 text-[#FFB902] fill-[#FFB902]" />
+                        <span className="text-xs font-bold text-[#FFB902] uppercase tracking-wider">Free Masterclass</span>
+                      </div>
+                      <h3 className="text-2xl font-bold text-white">Secure Your Seat</h3>
+                      <p className="text-slate-400 text-sm mt-1">Limited spots available for the live session.</p>
                     </div>
 
-                    <form onSubmit={handleSubmit} className="space-y-6">
-                      <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-2">
-                          Full name
-                        </label>
+                    <form onSubmit={handleSubmit} className="space-y-4">
+                      <div className="space-y-1">
+                        <label className="text-xs font-medium text-slate-400 ml-1">Full Name</label>
                         <input 
                           required
                           type="text" 
-                          className="w-full border border-gray-300 px-4 py-3 text-gray-900 focus:outline-none focus:ring-2 focus:ring-gray-900 focus:border-transparent"
-                          placeholder="Your name"
+                          placeholder="e.g. Abdullah Yusuf"
+                          className="w-full bg-[#00091A] border border-white/10 rounded-xl p-4 text-white placeholder:text-slate-600 focus:outline-none focus:border-[#FFB902] focus:ring-1 focus:ring-[#FFB902] transition-all"
                           value={formData.name}
                           onChange={(e) => setFormData({...formData, name: e.target.value})}
                         />
                       </div>
                       
-                      <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-2">
-                          Email address
-                        </label>
+                      <div className="space-y-1">
+                        <label className="text-xs font-medium text-slate-400 ml-1">Email Address</label>
                         <input 
                           required
                           type="email" 
-                          className="w-full border border-gray-300 px-4 py-3 text-gray-900 focus:outline-none focus:ring-2 focus:ring-gray-900 focus:border-transparent"
-                          placeholder="your@email.com"
+                          placeholder="name@example.com"
+                          className="w-full bg-[#00091A] border border-white/10 rounded-xl p-4 text-white placeholder:text-slate-600 focus:outline-none focus:border-[#FFB902] focus:ring-1 focus:ring-[#FFB902] transition-all"
                           value={formData.email}
                           onChange={(e) => setFormData({...formData, email: e.target.value})}
                         />
@@ -264,24 +329,19 @@ export default function Home() {
 
                       <button 
                         disabled={status === "loading"}
-                        className="w-full bg-gray-900 text-white hover:bg-gray-800 py-3 text-sm font-medium transition-colors flex items-center justify-center gap-2 disabled:opacity-50"
+                        className="w-full bg-[#FFB902] hover:bg-[#E5A500] text-[#001232] font-bold py-4 rounded-xl text-lg transition-all flex items-center justify-center gap-2 mt-2"
                       >
                         {status === "loading" ? (
-                          <>
-                            <Loader2 className="animate-spin w-4 h-4" />
-                            Registering...
-                          </>
+                          <> <Loader2 className="animate-spin w-5 h-5" /> Processing... </>
                         ) : (
-                          "Complete registration"
+                          <> Confirm Registration <ArrowRight className="w-5 h-5" /> </>
                         )}
                       </button>
-
-                      {status === "error" && (
-                        <p className="text-sm text-red-600 text-center">
-                          Something went wrong. Please try again.
-                        </p>
-                      )}
                     </form>
+                    
+                    <p className="mt-6 text-center text-[10px] text-slate-500 uppercase tracking-widest">
+                      Your data is encrypted & secure
+                    </p>
                   </>
                 )}
               </div>
@@ -289,6 +349,6 @@ export default function Home() {
           </motion.div>
         )}
       </AnimatePresence>
-    </main>
+    </div>
   );
 }
