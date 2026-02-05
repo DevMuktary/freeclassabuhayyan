@@ -1,39 +1,13 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { 
-  CheckCircle2, X, ArrowRight, Loader2, 
-  Wallet, ShieldCheck, BookOpen, Star, 
-  ChevronRight, Lock 
-} from "lucide-react";
-
-// --- Animation Variants ---
-const fadeInUp = {
-  hidden: { opacity: 0, y: 20 },
-  visible: { opacity: 1, y: 0, transition: { duration: 0.6, ease: [0.22, 1, 0.36, 1] } }
-};
-
-const staggerContainer = {
-  hidden: { opacity: 0 },
-  visible: {
-    opacity: 1,
-    transition: { staggerChildren: 0.1, delayChildren: 0.3 }
-  }
-};
+import { X, ArrowRight, Loader2, Check, Globe, Laptop, Smartphone } from "lucide-react";
 
 export default function Home() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [formData, setFormData] = useState({ name: "", email: "" });
   const [status, setStatus] = useState<"idle" | "loading" | "success" | "error">("idle");
-  const [scrolled, setScrolled] = useState(false);
-
-  // Handle scroll for navbar styling
-  useEffect(() => {
-    const handleScroll = () => setScrolled(window.scrollY > 50);
-    window.addEventListener("scroll", handleScroll);
-    return () => window.removeEventListener("scroll", handleScroll);
-  }, []);
 
   const openModal = () => setIsModalOpen(true);
   const closeModal = () => {
@@ -44,214 +18,177 @@ export default function Home() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setStatus("loading");
-    // Simulate API call
-    setTimeout(() => setStatus("success"), 1500); 
+    try {
+      const res = await fetch("/api/register", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(formData),
+      });
+      if (res.ok) setStatus("success");
+      else setStatus("error");
+    } catch (error) {
+      setStatus("error");
+    }
   };
 
   return (
-    <div className="relative min-h-screen bg-[#000B1E] text-slate-200 font-sans selection:bg-[#FFB902] selection:text-[#000B1E] overflow-x-hidden">
+    <main className="min-h-screen bg-[#001232] text-white relative font-sans selection:bg-[#FFB902] selection:text-[#001232]">
       
-      {/* --- AMBIENT BACKGROUND EFFECTS --- */}
-      <div className="fixed inset-0 z-0 pointer-events-none">
-        {/* Subtle Grid Pattern */}
-        <div className="absolute inset-0 bg-[linear-gradient(to_right,#ffffff05_1px,transparent_1px),linear-gradient(to_bottom,#ffffff05_1px,transparent_1px)] bg-[size:4rem_4rem] [mask-image:radial-gradient(ellipse_60%_50%_at_50%_0%,#000_70%,transparent_100%)]"></div>
-        {/* Top Glow */}
-        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[500px] bg-[#0f2e5c] opacity-40 blur-[120px] rounded-full mix-blend-screen"></div>
-        {/* Bottom Gold Glow */}
-        <div className="absolute bottom-0 right-0 w-[500px] h-[500px] bg-[#FFB902] opacity-5 blur-[120px] rounded-full"></div>
+      {/* NOISE TEXTURE OVERLAY (Removes the flat digital look) */}
+      <div className="fixed inset-0 opacity-[0.03] pointer-events-none z-0"
+           style={{ backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='1'/%3E%3C/svg%3E")` }}>
       </div>
 
-      {/* --- NAVBAR --- */}
-      <header className={`fixed top-0 left-0 right-0 z-40 transition-all duration-300 ${scrolled ? "py-4" : "py-6"}`}>
-        <div className={`max-w-6xl mx-auto px-6 transition-all duration-300 ${scrolled ? "bg-[#001232]/80 backdrop-blur-xl border border-white/5 rounded-full shadow-2xl shadow-black/20" : ""}`}>
-          <div className="flex items-center justify-between h-12">
-            <div className="flex items-center gap-2">
-              <div className="w-8 h-8 bg-gradient-to-br from-[#FFB902] to-[#B38000] rounded-lg flex items-center justify-center font-bold text-[#001232]">
-                A
-              </div>
-              <div className="text-lg font-bold tracking-tight text-white">
-                ABU HAYYAN <span className="text-[#FFB902] font-medium">SCHOOL</span>
-              </div>
-            </div>
-            <button 
-              onClick={openModal}
-              className="hidden md:flex items-center gap-2 text-sm font-medium text-white/80 hover:text-white transition-colors"
+      {/* --- BORDER FRAME (The Container) --- */}
+      <div className="relative z-10 max-w-[1400px] mx-auto border-x border-white/10 min-h-screen flex flex-col">
+        
+        {/* HEADER */}
+        <header className="flex justify-between items-center border-b border-white/10 p-6 md:p-8">
+          <div className="font-mono text-xs text-[#FFB902] tracking-widest uppercase">
+            [ Abu Hayyan School ]
+          </div>
+          <div className="hidden md:flex gap-8 text-xs font-mono tracking-widest text-gray-400">
+            <span>SKILLS & DEEN</span>
+            <span>EST. 2026</span>
+          </div>
+          <button 
+            onClick={openModal}
+            className="text-xs font-bold uppercase tracking-widest hover:text-[#FFB902] transition-colors"
+          >
+            Register Now
+          </button>
+        </header>
+
+        {/* HERO SECTION */}
+        <section className="flex-1 flex flex-col justify-center px-6 md:px-16 py-20 border-b border-white/10">
+          <div className="max-w-5xl">
+            <motion.div 
+              initial={{ opacity: 0, y: 30 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.8, ease: "easeOut" }}
             >
-              Secure Free Seat <ArrowRight className="w-4 h-4" />
-            </button>
+              <div className="font-mono text-[#FFB902] mb-4 text-xs md:text-sm tracking-widest">
+                /// ONE DAY ONLINE MASTERCLASS
+              </div>
+              
+              <h1 className="font-serif text-6xl md:text-8xl lg:text-9xl leading-[0.9] text-white mb-10">
+                Halal Digital <br/>
+                <span className="italic text-[#FFB902] pl-4 md:pl-12">Hustles.</span>
+              </h1>
+
+              <div className="grid md:grid-cols-2 gap-12 items-end">
+                <p className="text-gray-400 font-sans text-lg leading-relaxed max-w-md">
+                  We are dismantling the myth that you need interest (Riba) or shady tactics to make money online. 
+                  <span className="text-white block mt-2">10 Business Models. Zero Compromise.</span>
+                </p>
+
+                <div className="flex justify-start md:justify-end">
+                  <button 
+                    onClick={openModal}
+                    className="group bg-[#FFB902] text-[#001232] px-10 py-5 font-mono text-sm font-bold uppercase tracking-widest hover:bg-white transition-colors duration-300"
+                  >
+                    Secure Free Seat 
+                    <ArrowRight className="inline-block ml-3 w-4 h-4 group-hover:translate-x-1 transition-transform" />
+                  </button>
+                </div>
+              </div>
+            </motion.div>
+          </div>
+        </section>
+
+        {/* MARQUEE STRIP */}
+        <div className="border-b border-white/10 overflow-hidden py-4 bg-[#FFB902] text-[#001232]">
+          <div className="flex whitespace-nowrap animate-marquee">
+            {[...Array(10)].map((_, i) => (
+              <span key={i} className="mx-8 font-mono font-bold text-sm tracking-widest uppercase">
+                 Online Business • Zero Riba • Remote Skills •
+              </span>
+            ))}
           </div>
         </div>
-      </header>
 
-      <main className="relative z-10 pt-32 pb-20">
-        
-        {/* --- HERO SECTION --- */}
-        <section className="px-6 max-w-5xl mx-auto text-center mb-32">
-          <motion.div 
-            initial="hidden" 
-            animate="visible" 
-            variants={staggerContainer}
-          >
-            <motion.div variants={fadeInUp} className="flex justify-center mb-8">
-              <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full border border-[#FFB902]/20 bg-[#FFB902]/5 text-[#FFB902] text-xs font-semibold tracking-wider uppercase shadow-[0_0_20px_-5px_rgba(255,185,2,0.3)]">
-                <span className="relative flex h-2 w-2">
-                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#FFB902] opacity-75"></span>
-                  <span className="relative inline-flex rounded-full h-2 w-2 bg-[#FFB902]"></span>
-                </span>
-                Live Masterclass
-              </div>
-            </motion.div>
-            
-            <motion.h1 variants={fadeInUp} className="text-5xl md:text-7xl lg:text-8xl font-bold tracking-tighter text-white mb-8 leading-[0.95]">
-              Halal Digital <br />
-              <span className="relative inline-block text-transparent bg-clip-text bg-gradient-to-b from-[#FFE584] via-[#FFB902] to-[#B38000]">
-                Hustles
-                {/* Glow behind text */}
-                <div className="absolute inset-0 bg-[#FFB902] blur-3xl opacity-20 -z-10"></div>
-              </span> From Home
-            </motion.h1>
+        {/* GRID CONTENT */}
+        <section className="grid md:grid-cols-2 lg:grid-cols-3 divide-y md:divide-y-0 md:divide-x border-white/10">
+          
+          {/* Box 1 */}
+          <div className="p-10 md:p-14 group hover:bg-white/5 transition-colors">
+            <Globe className="w-8 h-8 text-[#FFB902] mb-6 stroke-1" />
+            <h3 className="font-serif text-2xl mb-4">The Economy</h3>
+            <p className="text-gray-400 text-sm leading-relaxed">
+              Understand how money moves on the internet in 2026. Stop guessing and start positioning yourself where the flow is.
+            </p>
+          </div>
 
-            <motion.p variants={fadeInUp} className="text-lg md:text-xl text-slate-400 max-w-2xl mx-auto mb-10 leading-relaxed font-light">
-              Master 10 legitimate, high-value online businesses. <br className="hidden md:block"/>
-              Zero interest. Zero compromise. <span className="text-white font-medium">100% Halal.</span>
-            </motion.p>
+          {/* Box 2 */}
+          <div className="p-10 md:p-14 group hover:bg-white/5 transition-colors">
+            <Laptop className="w-8 h-8 text-[#FFB902] mb-6 stroke-1" />
+            <h3 className="font-serif text-2xl mb-4">The Mechanics</h3>
+            <p className="text-gray-400 text-sm leading-relaxed">
+              We break down the technical setup. No "tech bro" jargon. Just simple steps: Click this, sign up here, post this.
+            </p>
+          </div>
 
-            <motion.div variants={fadeInUp} className="flex flex-col sm:flex-row items-center justify-center gap-4">
-              <button 
-                onClick={openModal}
-                className="relative group px-8 py-4 bg-white text-[#001232] text-lg font-bold rounded-full overflow-hidden transition-all hover:scale-[1.02] shadow-[0_0_40px_-10px_rgba(255,255,255,0.3)]"
-              >
-                <div className="absolute inset-0 w-full h-full bg-gradient-to-r from-transparent via-gray-200 to-transparent -translate-x-full group-hover:animate-shimmer"></div>
-                <span className="relative flex items-center gap-2">
-                  Register Now <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
-                </span>
-              </button>
-            </motion.div>
-          </motion.div>
+          {/* Box 3 */}
+          <div className="p-10 md:p-14 group hover:bg-white/5 transition-colors">
+            <Smartphone className="w-8 h-8 text-[#FFB902] mb-6 stroke-1" />
+            <h3 className="font-serif text-2xl mb-4">The Execution</h3>
+            <p className="text-gray-400 text-sm leading-relaxed">
+              How to get your first client using nothing but your phone and a proper proposal script (which we will provide).
+            </p>
+          </div>
+
         </section>
 
-        {/* --- FEATURES GRID --- */}
-        <section className="px-6 max-w-6xl mx-auto mb-32">
-          <motion.div 
-            initial={{ opacity: 0, y: 40 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.8 }}
-            className="grid md:grid-cols-3 gap-6"
-          >
-            {[
-              { 
-                icon: Wallet, 
-                title: "Zero Capital", 
-                desc: "Discover models that require just your time and brainpower to launch.",
-                color: "text-emerald-400" 
-              },
-              { 
-                icon: ShieldCheck, 
-                title: "Shariah Compliant", 
-                desc: "Every method is vetted against strict Islamic finance principles.",
-                color: "text-[#FFB902]" 
-              },
-              { 
-                icon: BookOpen, 
-                title: "Execution Playbook", 
-                desc: "Don't just learn 'what'. Learn 'how' with step-by-step guides.",
-                color: "text-blue-400" 
-              }
-            ].map((item, i) => (
-              <div key={i} className="group relative p-8 rounded-3xl bg-[#031538] border border-white/5 hover:border-white/10 transition-all duration-300 hover:shadow-2xl hover:shadow-[#000]/50 overflow-hidden">
-                <div className={`absolute top-0 right-0 p-32 opacity-10 bg-gradient-to-br from-white to-transparent blur-3xl rounded-full translate-x-12 -translate-y-12 transition-opacity group-hover:opacity-20`}></div>
-                
-                <div className={`w-12 h-12 rounded-2xl bg-white/5 border border-white/10 flex items-center justify-center mb-6 ${item.color}`}>
-                  <item.icon className="w-6 h-6" />
-                </div>
-                <h3 className="text-xl font-bold text-white mb-3">{item.title}</h3>
-                <p className="text-slate-400 leading-relaxed text-sm">{item.desc}</p>
-              </div>
-            ))}
-          </motion.div>
-        </section>
-
-        {/* --- CURRICULUM SECTION --- */}
-        <section className="px-6 max-w-5xl mx-auto mb-32">
-          <div className="flex flex-col md:flex-row gap-12 items-start">
-            <div className="md:w-1/3 sticky top-32">
-              <h2 className="text-3xl md:text-4xl font-bold text-white mb-4">
-                Masterclass <br />
-                <span className="text-[#FFB902]">Curriculum</span>
-              </h2>
-              <p className="text-slate-400 text-sm leading-relaxed mb-6">
-                This isn't a motivational speech. It's a tactical breakdown of the modern digital economy.
-              </p>
-              <div className="h-1 w-20 bg-[#FFB902] rounded-full"></div>
+        {/* CURRICULUM LIST (Brutalist List) */}
+        <section className="border-t border-white/10">
+          <div className="grid md:grid-cols-12">
+            <div className="md:col-span-4 p-10 md:p-14 border-b md:border-b-0 md:border-r border-white/10">
+              <h2 className="font-serif text-4xl mb-2">Curriculum</h2>
+              <p className="font-mono text-xs text-[#FFB902] uppercase tracking-widest">Version 1.0</p>
             </div>
-
-            <div className="md:w-2/3 grid gap-4 w-full">
+            
+            <div className="md:col-span-8">
               {[
-                "Deconstruct the Modern Online Economy",
-                "Blueprint: 10 Halal Business Models",
-                "Bootstrapping: Starting with ₦0 Capital",
-                "Tech Stack: Free Tools to Run Your Empire",
-                "Growth: Acquiring Your First 5 Clients",
-                "Ethics: Navigating Grey Areas in Digital Trade"
-              ].map((text, i) => (
-                <div key={i} className="flex items-center justify-between p-6 rounded-2xl bg-[#001232] border border-white/5 hover:border-[#FFB902]/30 transition-colors group">
-                  <div className="flex items-center gap-4">
-                    <span className="flex items-center justify-center w-8 h-8 rounded-full bg-[#001E4D] text-[#FFB902] text-xs font-bold font-mono border border-white/5">
-                      0{i + 1}
-                    </span>
-                    <span className="text-slate-200 font-medium group-hover:text-white transition-colors">{text}</span>
-                  </div>
-                  <ChevronRight className="w-5 h-5 text-slate-600 group-hover:text-[#FFB902] transition-colors" />
+                "10 Online Businesses Overview",
+                "Setting Up Your Digital Storefront",
+                "Zero-Capital Marketing Strategies",
+                "Client Acquisition & Negotiation",
+                "Islamic Finance in Digital Economy",
+                "Scaling & Automation Tools"
+              ].map((item, i) => (
+                <div key={i} className="flex items-center justify-between p-6 md:p-8 border-b border-white/10 hover:bg-white hover:text-[#001232] transition-all duration-300 cursor-default group">
+                  <span className="font-sans text-lg md:text-xl font-light">{item}</span>
+                  <span className="font-mono text-xs opacity-50 group-hover:opacity-100">MOD 0{i+1}</span>
                 </div>
               ))}
             </div>
           </div>
         </section>
 
-        {/* --- WARNING / CTA --- */}
-        <section className="px-6 pb-24">
-          <div className="max-w-4xl mx-auto relative rounded-[2.5rem] overflow-hidden border border-white/10">
-            {/* Background Gradient for CTA */}
-            <div className="absolute inset-0 bg-gradient-to-b from-[#001845] to-[#000510]"></div>
-            
-            <div className="relative p-10 md:p-16 text-center">
-              <div className="inline-flex items-center gap-2 text-rose-400 font-bold tracking-widest text-xs uppercase mb-6 bg-rose-500/10 px-4 py-2 rounded-full border border-rose-500/20">
-                <Lock className="w-3 h-3" /> Strict Warning
-              </div>
-              
-              <h2 className="text-3xl md:text-4xl font-bold text-white mb-6">
-                This is for the <span className="text-white decoration-[#FFB902] underline decoration-4 underline-offset-4">serious</span> few.
-              </h2>
-              
-              <p className="text-slate-400 max-w-xl mx-auto mb-10 text-lg">
-                If you are looking for "get rich quick" schemes or aren't ready to put in the work, please do not register.
-              </p>
-
-              <button 
-                onClick={openModal}
-                className="w-full sm:w-auto bg-[#FFB902] hover:bg-[#E5A500] text-[#001232] px-10 py-5 rounded-full font-bold text-lg transition-all shadow-xl shadow-[#FFB902]/10 hover:shadow-[#FFB902]/30"
-              >
-                Claim My Free Spot
-              </button>
-            </div>
+        {/* FOOTER */}
+        <footer className="p-10 md:p-14 border-t border-white/10 flex flex-col md:flex-row justify-between items-end gap-6">
+          <div>
+            <div className="font-serif text-2xl mb-2">Abu Hayyan School</div>
+            <div className="text-gray-500 text-sm">Skills & Deen</div>
           </div>
-        </section>
-        
-        {/* Footer */}
-        <footer className="text-center text-slate-600 text-sm py-8 border-t border-white/5">
-          © {new Date().getFullYear()} Abu Hayyan School. All rights reserved.
+          <div className="text-right">
+             <button onClick={openModal} className="text-[#FFB902] font-mono text-sm underline hover:text-white transition-colors">
+               Admin Login
+             </button>
+             <p className="text-gray-600 text-xs mt-2 font-mono uppercase tracking-widest">© 2026 Quadrox Tech</p>
+          </div>
         </footer>
-      </main>
 
-      {/* --- REFINED MODAL --- */}
+      </div>
+
+      {/* --- SHARP EDGED MODAL --- */}
       <AnimatePresence>
         {isModalOpen && (
           <motion.div 
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 z-50 flex items-center justify-center px-4 bg-[#000510]/60 backdrop-blur-md"
+            className="fixed inset-0 z-50 flex items-center justify-center px-4 bg-[#001232]/95 backdrop-blur-sm"
             onClick={closeModal}
           >
             <motion.div 
@@ -259,96 +196,85 @@ export default function Home() {
               animate={{ scale: 1, opacity: 1, y: 0 }}
               exit={{ scale: 0.95, opacity: 0, y: 20 }}
               onClick={(e) => e.stopPropagation()}
-              className="bg-[#001232] border border-white/10 w-full max-w-md rounded-3xl shadow-2xl overflow-hidden relative"
+              // SHARP CORNERS, THICK BORDER
+              className="w-full max-w-lg bg-[#000F2A] border-2 border-[#FFB902] relative"
             >
-              <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-[#FFB902] to-[#B38000]"></div>
               
-              <button 
-                onClick={closeModal}
-                className="absolute top-5 right-5 text-slate-500 hover:text-white transition-colors p-2 hover:bg-white/5 rounded-full"
-              >
-                <X className="w-5 h-5" />
+              <div className="bg-[#FFB902] text-[#001232] p-2 font-mono text-xs font-bold uppercase tracking-widest text-center">
+                New Student Registration
+              </div>
+
+              <button onClick={closeModal} className="absolute top-4 right-4 text-white hover:text-[#FFB902] transition-colors">
+                <X className="w-6 h-6" />
               </button>
 
-              <div className="p-8">
+              <div className="p-10 md:p-12">
                 {status === "success" ? (
-                  <div className="text-center py-8">
-                    <motion.div 
-                      initial={{ scale: 0 }} animate={{ scale: 1 }} 
-                      className="w-20 h-20 bg-emerald-500/10 rounded-full flex items-center justify-center mx-auto mb-6 border border-emerald-500/20"
-                    >
-                      <CheckCircle2 className="w-10 h-10 text-emerald-500" />
-                    </motion.div>
-                    <h3 className="text-2xl font-bold text-white mb-2">You're In.</h3>
-                    <p className="text-slate-400 mb-8 text-sm">
-                      Masha Allah. Join the exclusive WhatsApp group to receive the class link.
+                  <div className="text-center">
+                    <Check className="w-12 h-12 text-[#FFB902] mx-auto mb-6" />
+                    <h3 className="font-serif text-3xl text-white mb-4">You're In.</h3>
+                    <p className="text-gray-400 mb-8 font-sans">
+                      We've sent a confirmation email. To get the class link, you must join the WhatsApp group below.
                     </p>
                     <a 
                       href="https://chat.whatsapp.com/Ek0pnOcQkuEHsOAqU8cnpM"
                       target="_blank"
-                      className="flex items-center justify-center w-full bg-[#25D366] hover:bg-[#1DA851] text-white font-bold py-4 rounded-xl transition-all shadow-lg shadow-green-900/20"
+                      className="block w-full bg-[#25D366] hover:bg-white hover:text-[#001232] text-white py-4 font-mono text-sm font-bold tracking-widest uppercase transition-all text-center border border-transparent hover:border-black"
                     >
-                       Join WhatsApp Group
+                      [ Join WhatsApp Group ]
                     </a>
                   </div>
                 ) : (
-                  <>
-                    <div className="mb-8">
-                      <div className="flex items-center gap-2 mb-2">
-                        <Star className="w-4 h-4 text-[#FFB902] fill-[#FFB902]" />
-                        <span className="text-xs font-bold text-[#FFB902] uppercase tracking-wider">Free Masterclass</span>
-                      </div>
-                      <h3 className="text-2xl font-bold text-white">Secure Your Seat</h3>
-                      <p className="text-slate-400 text-sm mt-1">Limited spots available for the live session.</p>
-                    </div>
-
-                    <form onSubmit={handleSubmit} className="space-y-4">
-                      <div className="space-y-1">
-                        <label className="text-xs font-medium text-slate-400 ml-1">Full Name</label>
+                  <form onSubmit={handleSubmit} className="space-y-8">
+                    <div className="space-y-6">
+                       <div>
+                        <label className="block font-mono text-xs text-[#FFB902] uppercase tracking-widest mb-2">Name</label>
                         <input 
                           required
                           type="text" 
-                          placeholder="e.g. Abdullah Yusuf"
-                          className="w-full bg-[#00091A] border border-white/10 rounded-xl p-4 text-white placeholder:text-slate-600 focus:outline-none focus:border-[#FFB902] focus:ring-1 focus:ring-[#FFB902] transition-all"
+                          className="w-full bg-transparent border-b border-white/20 py-2 text-xl font-serif text-white placeholder-white/10 focus:outline-none focus:border-[#FFB902] transition-all rounded-none"
+                          placeholder="Abdullah Yusuf"
                           value={formData.name}
                           onChange={(e) => setFormData({...formData, name: e.target.value})}
                         />
-                      </div>
-                      
-                      <div className="space-y-1">
-                        <label className="text-xs font-medium text-slate-400 ml-1">Email Address</label>
+                       </div>
+                       <div>
+                        <label className="block font-mono text-xs text-[#FFB902] uppercase tracking-widest mb-2">Email</label>
                         <input 
                           required
                           type="email" 
-                          placeholder="name@example.com"
-                          className="w-full bg-[#00091A] border border-white/10 rounded-xl p-4 text-white placeholder:text-slate-600 focus:outline-none focus:border-[#FFB902] focus:ring-1 focus:ring-[#FFB902] transition-all"
+                          className="w-full bg-transparent border-b border-white/20 py-2 text-xl font-serif text-white placeholder-white/10 focus:outline-none focus:border-[#FFB902] transition-all rounded-none"
+                          placeholder="email@address.com"
                           value={formData.email}
                           onChange={(e) => setFormData({...formData, email: e.target.value})}
                         />
-                      </div>
+                       </div>
+                    </div>
 
-                      <button 
-                        disabled={status === "loading"}
-                        className="w-full bg-[#FFB902] hover:bg-[#E5A500] text-[#001232] font-bold py-4 rounded-xl text-lg transition-all flex items-center justify-center gap-2 mt-2"
-                      >
-                        {status === "loading" ? (
-                          <> <Loader2 className="animate-spin w-5 h-5" /> Processing... </>
-                        ) : (
-                          <> Confirm Registration <ArrowRight className="w-5 h-5" /> </>
-                        )}
-                      </button>
-                    </form>
-                    
-                    <p className="mt-6 text-center text-[10px] text-slate-500 uppercase tracking-widest">
-                      Your data is encrypted & secure
-                    </p>
-                  </>
+                    <button 
+                      disabled={status === "loading"}
+                      className="w-full bg-white text-[#001232] hover:bg-[#FFB902] py-5 font-mono text-sm font-bold tracking-widest uppercase transition-colors"
+                    >
+                      {status === "loading" ? <Loader2 className="animate-spin w-5 h-5 mx-auto" /> : "Confirm Registration"}
+                    </button>
+                  </form>
                 )}
               </div>
             </motion.div>
           </motion.div>
         )}
       </AnimatePresence>
-    </div>
+      
+      {/* Animation Styles for Marquee */}
+      <style jsx global>{`
+        @keyframes marquee {
+          0% { transform: translateX(0); }
+          100% { transform: translateX(-50%); }
+        }
+        .animate-marquee {
+          animation: marquee 20s linear infinite;
+        }
+      `}</style>
+    </main>
   );
 }
