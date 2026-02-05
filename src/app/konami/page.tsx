@@ -1,14 +1,18 @@
 import { PrismaClient } from "@prisma/client";
 import { Users, Eye, BarChart3 } from "lucide-react";
 
+// --- FIX: FORCE DYNAMIC RENDERING ---
+export const dynamic = 'force-dynamic';
+export const revalidate = 0;
+// ------------------------------------
+
 const prisma = new PrismaClient();
 
-// This page runs on the server, so it can talk to the DB directly
 export default async function Dashboard() {
   const visitorCount = await prisma.siteVisit.count();
   const registrationCount = await prisma.registration.count();
   
-  // Calculate conversion rate (avoid division by zero)
+  // Calculate conversion rate
   const conversionRate = visitorCount > 0 
     ? ((registrationCount / visitorCount) * 100).toFixed(1) 
     : "0";
@@ -73,7 +77,6 @@ export default async function Dashboard() {
                 </tr>
               </thead>
               <tbody className="text-sm font-light text-gray-300">
-                {/* We fetch the last 10 users */}
                 {(await prisma.registration.findMany({
                    take: 10,
                    orderBy: { createdAt: 'desc' }
