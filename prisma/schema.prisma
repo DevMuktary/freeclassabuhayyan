@@ -13,3 +13,9 @@ model Registration {
   email     String   @unique
   createdAt DateTime @default(now())
 }
+
+// NEW: Table to track page views
+model SiteVisit {
+  id        String   @id @default(cuid())
+  createdAt DateTime @default(now())
+}
